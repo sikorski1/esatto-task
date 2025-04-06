@@ -41,6 +41,7 @@ export async function GET(request: Request) {
 	try {
 		await connectMongoDB();
 		const url = new URL(request.url);
+
 		const pageParam = url.searchParams.get("page");
 		let page = 1;
 		if (pageParam) {
@@ -49,9 +50,15 @@ export async function GET(request: Request) {
 				page = parsedPage;
 			}
 		}
+		const sortBy = url.searchParams.get("sortBy") || "createdAt";
+		const order = url.searchParams.get("order") === "asc" ? 1 : -1;
 		const skip = (page - 1) * PER_PAGE;
 		const [animals, totalAnimals] = await Promise.all([
-			Animal.find().sort({ createdAt: -1 }).skip(skip).limit(PER_PAGE).exec(),
+			Animal.find()
+				.sort({ [sortBy]: order })
+				.skip(skip)
+				.limit(PER_PAGE)
+				.exec(),
 			Animal.countDocuments().exec(),
 		]);
 		const totalPages = Math.ceil(totalAnimals / PER_PAGE);
