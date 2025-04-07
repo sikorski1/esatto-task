@@ -10,8 +10,7 @@ interface Params {
 }
 const updateValidationAnimalSchema = validationAnimalSchema.partial();
 export async function GET(request: Request, { params }: Params) {
-	console.log(123, params);
-	const { animalId } = params;
+	const { animalId } = await params;
 	if (!mongoose.Types.ObjectId.isValid(animalId)) {
 		return NextResponse.json({ message: "Wrong animal ID" }, { status: 400 });
 	}
@@ -28,7 +27,7 @@ export async function GET(request: Request, { params }: Params) {
 }
 
 export async function PUT(request: Request, { params }: Params) {
-	const { animalId } = params;
+	const { animalId } = await params;
 	if (!mongoose.Types.ObjectId.isValid(animalId)) {
 		return NextResponse.json({ message: "Wrong animal ID" }, { status: 400 });
 	}
@@ -60,7 +59,7 @@ export async function PUT(request: Request, { params }: Params) {
 }
 
 export async function DELETE(request: Request, { params }: Params) {
-	const { animalId } = params;
+	const { animalId } = await params;
 	if (!mongoose.Types.ObjectId.isValid(animalId)) {
 		return NextResponse.json({ message: "Wrong animal ID" }, { status: 400 });
 	}

@@ -6,5 +6,5 @@ export const validationAnimalSchema = z.object({
 		invalid_type_error: 'Type must be either "cat" or "dog"',
 	}),
 	isPurebred: z.boolean().optional(),
-	age: z.number().min(0, { message: "Age must be a positive number" }),
+	age: z.coerce.number().min(0, { message: "Age must be a positive number" }),
 });

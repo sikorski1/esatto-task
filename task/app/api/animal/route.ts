@@ -2,6 +2,7 @@ import connectMongoDB from "@/libs/mongodb";
 import { Animal } from "@/models/animal";
 import { NextResponse } from "next/server";
 import { validationAnimalSchema } from "./validation";
+const PER_PAGE = 15;
 export async function POST(request: Request) {
 	try {
 		await connectMongoDB();
@@ -36,7 +37,6 @@ export async function POST(request: Request) {
 	}
 }
 
-const PER_PAGE = 10;
 export async function GET(request: Request) {
 	try {
 		await connectMongoDB();
@@ -62,7 +62,7 @@ export async function GET(request: Request) {
 			Animal.countDocuments().exec(),
 		]);
 		const totalPages = Math.ceil(totalAnimals / PER_PAGE);
-		const hasNextPage = page < totalPages
+		const hasNextPage = page < totalPages;
 		return NextResponse.json(
 			{
 				animals,

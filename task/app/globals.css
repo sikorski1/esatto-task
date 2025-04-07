@@ -8,11 +8,17 @@
 }
 
 body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 	background-color: var(--color-background);
 }
 
 .shadow-strong,
-.shadow-strong-clickable {
+.shadow-strong-clickable,
+.shadow-strong-card,
+.shadow-strong-input,
+.shadow-strong-delete {
 	box-shadow: 4px 3px 1px black;
 	border: solid 2px black;
 	border-radius: 4px;
@@ -24,6 +30,19 @@ body {
 	background-color: var(--color-aqua-900);
 	color: var(--color-background);
 	box-shadow: 5px 4px 2px black;
+}
+.shadow-strong-delete:hover {
+	transform: translate(-1px, -1px);
+	background-color: red;
+	color: var(--color-background);
+	box-shadow: 5px 4px 2px black;
+}
+.shadow-strong-card:hover,
+.shadow-strong-input:hover {
+	background-color: var(--color-aqua-900);
+}
+.shadow-strong-input:hover {
+	color: var(--color-background);
 }
 .shadow-strong-clickable:active {
 	transform: translate(2px, 2px);
