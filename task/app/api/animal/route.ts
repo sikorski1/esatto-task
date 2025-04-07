@@ -62,12 +62,14 @@ export async function GET(request: Request) {
 			Animal.countDocuments().exec(),
 		]);
 		const totalPages = Math.ceil(totalAnimals / PER_PAGE);
+		const hasNextPage = page < totalPages
 		return NextResponse.json(
 			{
 				animals,
 				currentPage: page,
 				totalPages,
 				totalAnimals,
+				hasNextPage,
 				limit: PER_PAGE,
 			},
 			{ status: 200 }

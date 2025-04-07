@@ -1,5 +1,6 @@
-import mongoose,{ Schema } from "mongoose";
-export interface IAnimal extends Document {
+import mongoose, { Schema } from "mongoose";
+export interface IAnimal {
+	_id: string;
 	name: string;
 	type: "cat" | "dog";
 	isPurebred: boolean;

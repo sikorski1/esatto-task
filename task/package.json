@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.72.0",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "jose": "^6.0.10",
+    "lucide-react": "^0.487.0",
     "mongoose": "^8.13.2",
     "next": "15.2.4",
     "react": "^19.0.0",
