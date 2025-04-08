@@ -1,6 +1,7 @@
 import ReactQueryProvider from "@/libs/reactquery";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Footer from "./components/Footer";
 import "./globals.css";
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -24,10 +25,10 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased `}>
-				<ReactQueryProvider>{children}</ReactQueryProvider>
-				<footer className="mt-auto relative p-12 flex items-center justify-center">
-					<p>Esatto Task</p>
-				</footer>
+				<ReactQueryProvider>
+					{children}
+					<Footer />
+				</ReactQueryProvider>
 			</body>
 		</html>
 	);
