@@ -1,4 +1,3 @@
-
 import FunFact from "./FunFact";
 
 export default function Footer() {

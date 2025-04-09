@@ -1,17 +1,46 @@
-"use client"
+"use client";
 import { useFunFact } from "@/hooks/useFunFact";
-export default function FunFact() {
-	const { data, error, isLoading, refetch } = useFunFact();
-    console.log(data);
-	return (
-		<div className="p-4 bg-yellow-100 rounded-xl shadow-md text-center max-w-xl mx-auto mt-10">
-			{isLoading && <p>Loading a fun fact...</p>}
-			{error && <p>Oops! {error.message}</p>}
-			{data && <p>{data[0].fact}</p>}
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import Button from "./Button";
 
-			<button onClick={() => refetch()} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">
-				New Fun Fact
-			</button>
+export default function FunFactTooltip() {
+	const [showTooltip, setShowTooltip] = useState(false);
+	const tooltipRef = useRef<HTMLDivElement>(null);
+	const { data, error, isLoading, refetch, isFetching } = useFunFact();
+
+	const toggleTooltip = () => {
+		setShowTooltip(prev => {
+			const next = !prev;
+			if (next) {
+				refetch(); // tylko przy otwieraniu
+			}
+			return next;
+		});
+	};
+
+
+	return (
+		<div className="w-full relative flex justify-end">
+			<Button onClick={toggleTooltip} colors="bg-background text-black">
+				Fun Fact
+			</Button>
+			<AnimatePresence>
+				{showTooltip && (
+					<motion.div
+						ref={tooltipRef}
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: 10 }}
+						transition={{ duration: 0.2 }}
+						className="absolute z-10 bottom-full right-0 mb-2 p-4 w-[300px] bg-aqua-500 text-background text-center font-bold rounded-xl shadow-strong space-y-4"
+					>
+						{(isLoading || isFetching) && <p>Loading a fun fact...</p>}
+						{error && !isFetching && <p>Oops! {error.message}</p>}
+						{data && !isFetching && <p>{data[0].fact}</p>}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }

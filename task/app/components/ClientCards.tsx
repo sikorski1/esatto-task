@@ -19,10 +19,10 @@ export default function ClientCards() {
 	const [modalState, setModalState] = useState<ModalState>({ isOpen: false, mode: "add" });
 	const openAddModal = () => setModalState({ isOpen: true, mode: "add" });
 
+	const { data, isLoading, error } = useGetAnimals(queryParams.page, queryParams.sortBy, queryParams.order);
 	const { mutate: createAnimal } = usePostAnimal();
 	const { mutate: updateAnimal } = useUpdateAnimal();
 	const { mutate: deleteAnimal } = useDeleteAnimal();
-	const { data, isLoading, error } = useGetAnimals(queryParams.page, queryParams.sortBy, queryParams.order);
 
 	const openEditModal = (animal: IAnimal) => {
 		setModalState({ isOpen: true, mode: "edit", animal });
@@ -76,7 +76,6 @@ export default function ClientCards() {
 		deleteAnimal({id})
 	}
 	if (error) return <div>Error: {error.message}</div>;
-
 	return (
 		<>
 			{modalState.isOpen && (

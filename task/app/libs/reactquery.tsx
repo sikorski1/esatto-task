@@ -8,8 +8,8 @@ export default function ReactQueryProvider({ children }: { children: React.React
 			new QueryClient({
 				defaultOptions: {
 					queries: {
-						staleTime: 6 * 1000,
-						refetchInterval: 6 * 1000,
+						staleTime: 360 * 1000,
+						refetchInterval: 360 * 1000,
 					},
 				},
 			})
