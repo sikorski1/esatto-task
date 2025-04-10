@@ -131,15 +131,15 @@ export default function ClientCards() {
 			<div className="w-full">
 				{viewType === "animals" && (
 					<>
-						<div className="flex justify-between w-full mb-12">
+						<div className="flex flex-col sm:flex-row justify-between w-full mb-12">
 							<input
 								type="text"
 								placeholder="Search by name..."
 								value={searchTerm}
 								onChange={e => setSearchTerm(e.target.value)}
-								className="px-4 py-2 border rounded-md shadow-strong"
+								className="px-4 py-2 border rounded-md shadow-strong w-full sm:w-auto mb-4 sm:mb-0"
 							/>
-							<div className="flex gap-4">
+							<div className="flex mb-4 justify-center items-center flex-wrap gap-2 sm:mb-0 sm:sm:gap-4 sm:flex-nowrap">
 								<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
 									Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": 🐱" : ": 🐶")}
 								</Button>
@@ -153,7 +153,7 @@ export default function ClientCards() {
 									Sort by Date {queryParams.sortBy === "createdAt" && (queryParams.order === "asc" ? "↑" : "↓")}
 								</Button>
 							</div>
-							<Button onClick={openAddModal}>Add</Button>
+							<Button  onClick={openAddModal}>Add</Button>
 						</div>
 						{isLoadingAnimals && <p className=" text-center">Loading...</p>}
 						{animals?.animals && <Cards animals={animals.animals} onEdit={openEditModal} />}
