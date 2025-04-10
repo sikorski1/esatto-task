@@ -2,32 +2,11 @@ import { validationAnimalSchema } from "@/api/animal/validation";
 import connectMongoDB from "@/libs/mongodb";
 import { Animal } from "@/models/animal";
 import mongoose from "mongoose";
-import { NextResponse } from "next/server";
-interface Params {
-	params: {
-		animalId: string;
-	};
-}
-const updateValidationAnimalSchema = validationAnimalSchema.partial();
-export async function GET(request: Request, { params }: Params) {
-	const { animalId } = await params;
-	if (!mongoose.Types.ObjectId.isValid(animalId)) {
-		return NextResponse.json({ message: "Wrong animal ID" }, { status: 400 });
-	}
-	try {
-		await connectMongoDB();
-		const animal = await Animal.findById(animalId);
-		if (!animal) {
-			return NextResponse.json({ message: "No animal found with the given id" }, { status: 404 });
-		}
-		return NextResponse.json({ animal }, { status: 200 });
-	} catch (error) {
-		return NextResponse.json({ message: "Error fetching single animal", error }, { status: 500 });
-	}
-}
 
-export async function PUT(request: Request, { params }: Params) {
-	const { animalId } = await params;
+import { NextResponse } from "next/server";
+const updateValidationAnimalSchema = validationAnimalSchema.partial();
+export async function PUT(request: Request, { params }: { params: Promise<{ animalId: string }> }) {
+	const animalId = (await params).animalId;
 	if (!mongoose.Types.ObjectId.isValid(animalId)) {
 		return NextResponse.json({ message: "Wrong animal ID" }, { status: 400 });
 	}
@@ -58,8 +37,8 @@ export async function PUT(request: Request, { params }: Params) {
 	}
 }
 
-export async function DELETE(request: Request, { params }: Params) {
-	const { animalId } = await params;
+export async function DELETE(request: Request, { params }: { params: Promise<{ animalId: string }> }) {
+	const animalId = (await params).animalId;
 	if (!mongoose.Types.ObjectId.isValid(animalId)) {
 		return NextResponse.json({ message: "Wrong animal ID" }, { status: 400 });
 	}
