@@ -1,7 +1,7 @@
 "use client";
 import { useFunFact } from "@/hooks/useFunFact";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRef, useState } from "react";
 import Button from "./Button";
 
 export default function FunFactTooltip() {
@@ -13,12 +13,11 @@ export default function FunFactTooltip() {
 		setShowTooltip(prev => {
 			const next = !prev;
 			if (next) {
-				refetch(); // tylko przy otwieraniu
+				refetch();
 			}
 			return next;
 		});
 	};
-
 
 	return (
 		<div className="w-full relative flex justify-end">
@@ -33,8 +32,7 @@ export default function FunFactTooltip() {
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 10 }}
 						transition={{ duration: 0.2 }}
-						className="absolute z-10 bottom-full right-0 mb-2 p-4 w-[300px] bg-aqua-500 text-background text-center font-bold rounded-xl shadow-strong space-y-4"
-					>
+						className="absolute z-10 bottom-full right-0 mb-2 p-4 w-[300px] bg-aqua-500 text-background text-center font-bold rounded-xl shadow-strong space-y-4">
 						{(isLoading || isFetching) && <p>Loading a fun fact...</p>}
 						{error && !isFetching && <p>Oops! {error.message}</p>}
 						{data && !isFetching && <p>{data[0].fact}</p>}

@@ -72,9 +72,9 @@ export default function ClientCards() {
 		}
 		closeModal();
 	};
-	const handleDelete = (id:string) => {
-		deleteAnimal({id})
-	}
+	const handleDelete = (id: string) => {
+		deleteAnimal({ id });
+	};
 	if (error) return <div>Error: {error.message}</div>;
 	return (
 		<>
@@ -94,11 +94,11 @@ export default function ClientCards() {
 			<div className="w-full">
 				<div className="flex justify-between w-full mb-12">
 					<div className="flex gap-4">
+						<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
+							Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": 🐱" : ": 🐶")}
+						</Button>
 						<Button onClick={() => changeSortField("name")} isActive={queryParams.sortBy === "name"}>
 							Sort by Name {queryParams.sortBy === "name" && (queryParams.order === "asc" ? "↑" : "↓")}
-						</Button>
-						<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
-							Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": cat" : ": dog")}
 						</Button>
 						<Button onClick={() => changeSortField("age")} isActive={queryParams.sortBy === "age"}>
 							Sort by Age {queryParams.sortBy === "age" && (queryParams.order === "asc" ? "↑" : "↓")}
