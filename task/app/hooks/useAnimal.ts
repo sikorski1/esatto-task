@@ -1,4 +1,5 @@
-import { IAnimal } from "@/models/animal";
+import { ICat } from "@/models/cat";
+import { IDog } from "@/models/dog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -8,13 +9,18 @@ type AnimalResponse = {
 	totalAnimals: number;
 	limit: number;
 	hasNextPage: boolean;
-	animals: IAnimal[];
+	animals: IDog[] | ICat[];
 };
 
-export const fetchAnimals = async (page: number, sortBy: string, order: string): Promise<AnimalResponse> => {
+export const fetchAnimals = async (
+	page: number,
+	sortBy: string,
+	order: string,
+	search: string
+): Promise<AnimalResponse> => {
 	try {
 		const response = await axios.get(
-			`${process.env.NEXT_PUBLIC_API_URL}/api/animal?page=${page}&sortBy=${sortBy}&order=${order}`
+			`${process.env.NEXT_PUBLIC_API_URL}/api/animal?page=${page}&sortBy=${sortBy}&order=${order}&search=${search}`
 		);
 		return response.data;
 	} catch (error) {
@@ -23,7 +29,7 @@ export const fetchAnimals = async (page: number, sortBy: string, order: string):
 	}
 };
 
-export const postAnimal = async ({ data }: { data: IAnimal }): Promise<AnimalResponse> => {
+export const postAnimal = async ({ data }: { data: IDog | ICat }): Promise<AnimalResponse> => {
 	try {
 		const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/animal`, data, {
 			headers: {
@@ -37,7 +43,7 @@ export const postAnimal = async ({ data }: { data: IAnimal }): Promise<AnimalRes
 	}
 };
 
-export const updateAnimal = async ({ data }: { data: IAnimal }): Promise<AnimalResponse> => {
+export const updateAnimal = async ({ data }: { data: IDog | ICat }): Promise<AnimalResponse> => {
 	try {
 		const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/animal/${data._id}`, data, {
 			headers: {
@@ -53,7 +59,6 @@ export const updateAnimal = async ({ data }: { data: IAnimal }): Promise<AnimalR
 
 export const deleteAnimal = async ({ id }: { id: string }): Promise<AnimalResponse> => {
 	try {
-		console.log(id, ` ${process.env.NEXT_PUBLIC_API_URL}/api/animal/${id}`);
 		const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/animal/${id}`, {
 			headers: {
 				"Content-Type": "application/json",
@@ -66,10 +71,10 @@ export const deleteAnimal = async ({ id }: { id: string }): Promise<AnimalRespon
 	}
 };
 
-export const useGetAnimals = (page: number, sortBy: string, order: string) => {
+export const useGetAnimals = (page: number, sortBy: string, order: string, search: string) => {
 	return useQuery<AnimalResponse, Error>({
-		queryKey: ["animals", page, sortBy, order],
-		queryFn: () => fetchAnimals(page, sortBy, order),
+		queryKey: ["animals", page, sortBy, order, search],
+		queryFn: () => fetchAnimals(page, sortBy, order, search),
 	});
 };
 

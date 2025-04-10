@@ -1,10 +1,12 @@
+import { IToy } from "./toy";
 import mongoose, { Schema } from "mongoose";
 export interface IAnimal {
 	_id: string;
 	name: string;
-	type: "cat" | "dog";
 	isPurebred: boolean;
 	age: number;
+	favouriteToys: IToy[];
+	type: "dog" | "cat";
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -15,11 +17,6 @@ const AnimalSchema: Schema<IAnimal> = new Schema(
 			required: true,
 			trim: true,
 		},
-		type: {
-			type: String,
-			required: true,
-			enum: ["cat", "dog"],
-		},
 		isPurebred: {
 			type: Boolean,
 			default: false,
@@ -29,8 +26,10 @@ const AnimalSchema: Schema<IAnimal> = new Schema(
 			required: true,
 			min: 0,
 		},
+		favouriteToys: [{ type: Schema.Types.ObjectId, ref: "Toy" }],
 	},
 	{
+		discriminatorKey: "type",
 		timestamps: true,
 	}
 );

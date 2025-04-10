@@ -1,10 +1,9 @@
-import { validationAnimalSchema } from "@/api/animal/validation";
+import { updateValidationAnimalSchema } from "@/api/animal/validation";
 import connectMongoDB from "@/libs/mongodb";
 import { Animal } from "@/models/animal";
 import mongoose from "mongoose";
 
 import { NextResponse } from "next/server";
-const updateValidationAnimalSchema = validationAnimalSchema.partial();
 export async function PUT(request: Request, { params }: { params: Promise<{ animalId: string }> }) {
 	const animalId = (await params).animalId;
 	if (!mongoose.Types.ObjectId.isValid(animalId)) {
@@ -12,6 +11,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ anim
 	}
 	try {
 		const body = await request.json();
+		const animal = await Animal.findById(animalId);
+		if (body.type !== animal.type) {
+			return NextResponse.json({ message: "Type cannot be updated" }, { status: 400 });
+		}
 		const validation = updateValidationAnimalSchema.safeParse(body);
 		if (!validation.success) {
 			return NextResponse.json(

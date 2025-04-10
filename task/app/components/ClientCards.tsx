@@ -4,27 +4,39 @@ import Cards from "@/components/Cards";
 import Form from "@/components/Form";
 import Modal from "@/components/Modal";
 import { useDeleteAnimal, useGetAnimals, usePostAnimal, useUpdateAnimal } from "@/hooks/useAnimal";
-import { IAnimal } from "@/models/animal";
-import { useState } from "react";
+import { useGetToys } from "@/hooks/useToys";
+import { ICat } from "@/models/cat";
+import { IDog } from "@/models/dog";
+import { useEffect, useState } from "react";
+import ToysList from "./ToysList";
 type ModalState =
 	| { isOpen: false; mode: "add" }
 	| { isOpen: true; mode: "add" }
-	| { isOpen: true; mode: "edit"; animal: IAnimal };
+	| { isOpen: true; mode: "edit"; animal: IDog | ICat };
+const DEBOUNCE_DELAY = 500;
 export default function ClientCards() {
 	const [queryParams, setQueryParams] = useState({
 		page: 1,
 		sortBy: "createdAt",
 		order: "desc",
+		search: "",
 	});
+	const [searchTerm, setSearchTerm] = useState("");
 	const [modalState, setModalState] = useState<ModalState>({ isOpen: false, mode: "add" });
+	const [viewType, setViewType] = useState<"animals" | "toys">("animals");
 	const openAddModal = () => setModalState({ isOpen: true, mode: "add" });
 
-	const { data, isLoading, error } = useGetAnimals(queryParams.page, queryParams.sortBy, queryParams.order);
+	const {
+		data: animals,
+		isLoading: isLoadingAnimals,
+		error: animalsError,
+	} = useGetAnimals(queryParams.page, queryParams.sortBy, queryParams.order, queryParams.search);
+	const { data: toys, isLoading: isLoadingToys, error: toysError } = useGetToys(queryParams.page);
 	const { mutate: createAnimal } = usePostAnimal();
 	const { mutate: updateAnimal } = useUpdateAnimal();
 	const { mutate: deleteAnimal } = useDeleteAnimal();
 
-	const openEditModal = (animal: IAnimal) => {
+	const openEditModal = (animal: IDog | ICat) => {
 		setModalState({ isOpen: true, mode: "edit", animal });
 	};
 
@@ -42,12 +54,13 @@ export default function ClientCards() {
 					...prev,
 					sortBy: field,
 					order: "desc",
+					page: 1,
 				};
 			}
 		});
 	};
 	const nextPage = () => {
-		if (data?.hasNextPage) {
+		if (animals?.hasNextPage) {
 			setQueryParams(prev => ({
 				...prev,
 				page: prev.page + 1,
@@ -64,7 +77,7 @@ export default function ClientCards() {
 		}
 	};
 
-	const handleFormSubmit = (data: IAnimal) => {
+	const handleFormSubmit = (data: IDog | ICat) => {
 		if (modalState.mode === "add") {
 			createAnimal({ data });
 		} else if (modalState.mode === "edit") {
@@ -75,7 +88,23 @@ export default function ClientCards() {
 	const handleDelete = (id: string) => {
 		deleteAnimal({ id });
 	};
-	if (error) return <div>Error: {error.message}</div>;
+
+	useEffect(() => {
+		if (searchTerm === queryParams.search) return;
+		const handler = setTimeout(() => {
+			setQueryParams(prev => ({
+				...prev,
+				search: searchTerm,
+				page: 1,
+			}));
+		}, DEBOUNCE_DELAY);
+		return () => {
+			clearTimeout(handler);
+		};
+	}, [searchTerm, queryParams.search]);
+
+	if (animalsError && viewType === "animals") return <div>Error: {animalsError.message}</div>;
+	if (toysError && viewType === "toys") return <div>Error: {toysError.message}</div>;
 	return (
 		<>
 			{modalState.isOpen && (
@@ -91,48 +120,72 @@ export default function ClientCards() {
 					</div>
 				</Modal>
 			)}
+			<div className="flex gap-4 mb-4">
+				<Button onClick={() => setViewType("animals")} isActive={viewType === "animals"}>
+					Animals
+				</Button>
+				<Button onClick={() => setViewType("toys")} isActive={viewType === "toys"}>
+					Toys
+				</Button>
+			</div>
 			<div className="w-full">
-				<div className="flex justify-between w-full mb-12">
-					<div className="flex gap-4">
-						<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
-							Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": 🐱" : ": 🐶")}
-						</Button>
-						<Button onClick={() => changeSortField("name")} isActive={queryParams.sortBy === "name"}>
-							Sort by Name {queryParams.sortBy === "name" && (queryParams.order === "asc" ? "↑" : "↓")}
-						</Button>
-						<Button onClick={() => changeSortField("age")} isActive={queryParams.sortBy === "age"}>
-							Sort by Age {queryParams.sortBy === "age" && (queryParams.order === "asc" ? "↑" : "↓")}
-						</Button>
-						<Button onClick={() => changeSortField("createdAt")} isActive={queryParams.sortBy === "createdAt"}>
-							Sort by Date {queryParams.sortBy === "createdAt" && (queryParams.order === "asc" ? "↑" : "↓")}
-						</Button>
-					</div>
-					<Button onClick={openAddModal}>Add</Button>
-				</div>
-				{isLoading && <p className=" text-center">Loading...</p>}
-				{data?.animals && <Cards animals={data.animals} onEdit={openEditModal} />}
-
-				<div className="flex justify-center gap-4 mt-12">
-					<Button
-						onClick={() => {
-							prevPage();
-							document.getElementById("header")?.scrollIntoView({ behavior: "smooth" });
-						}}
-						disabled={queryParams.page === 1}>
-						Previous Page
-					</Button>
-					<span className="flex justify-center items-center w-[64px] h-[64px] text-aqua-900 font-bold text-xl shadow-strong ">
-						{queryParams.page}
-					</span>
-					<Button
-						onClick={() => {
-							nextPage();
-							document.getElementById("header")?.scrollIntoView({ behavior: "smooth" });
-						}}
-						disabled={!data?.hasNextPage}>
-						Next Page
-					</Button>
-				</div>
+				{viewType === "animals" && (
+					<>
+						<div className="flex justify-between w-full mb-12">
+							<input
+								type="text"
+								placeholder="Search by name..."
+								value={searchTerm}
+								onChange={e => setSearchTerm(e.target.value)}
+								className="px-4 py-2 border rounded-md shadow-strong"
+							/>
+							<div className="flex gap-4">
+								<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
+									Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": 🐱" : ": 🐶")}
+								</Button>
+								<Button onClick={() => changeSortField("name")} isActive={queryParams.sortBy === "name"}>
+									Sort by Name {queryParams.sortBy === "name" && (queryParams.order === "asc" ? "↑" : "↓")}
+								</Button>
+								<Button onClick={() => changeSortField("age")} isActive={queryParams.sortBy === "age"}>
+									Sort by Age {queryParams.sortBy === "age" && (queryParams.order === "asc" ? "↑" : "↓")}
+								</Button>
+								<Button onClick={() => changeSortField("createdAt")} isActive={queryParams.sortBy === "createdAt"}>
+									Sort by Date {queryParams.sortBy === "createdAt" && (queryParams.order === "asc" ? "↑" : "↓")}
+								</Button>
+							</div>
+							<Button onClick={openAddModal}>Add</Button>
+						</div>
+						{isLoadingAnimals && <p className=" text-center">Loading...</p>}
+						{animals?.animals && <Cards animals={animals.animals} onEdit={openEditModal} />}
+						<div className="flex justify-center gap-4 mt-12">
+							<Button
+								onClick={() => {
+									prevPage();
+									document.getElementById("header-scroll")?.scrollIntoView();
+								}}
+								disabled={queryParams.page === 1}>
+								Previous Page
+							</Button>
+							<span className="flex justify-center items-center w-[64px] h-[64px] text-aqua-900 font-bold text-xl shadow-strong ">
+								{queryParams.page}
+							</span>
+							<Button
+								onClick={() => {
+									nextPage();
+									document.getElementById("header-scroll")?.scrollIntoView();
+								}}
+								disabled={!animals?.hasNextPage}>
+								Next Page
+							</Button>
+						</div>
+					</>
+				)}
+				{viewType === "toys" && (
+					<>
+						{isLoadingToys && <p className=" text-center">Loading...</p>}
+						{toys?.toys && <ToysList toys={toys.toys} />}
+					</>
+				)}
 			</div>
 		</>
 	);

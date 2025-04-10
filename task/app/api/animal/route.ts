@@ -1,7 +1,9 @@
+import { validationAnimalSchema } from "@/api/animal/validation";
 import connectMongoDB from "@/libs/mongodb";
 import { Animal } from "@/models/animal";
+import { Cat } from "@/models/cat";
+import { Dog } from "@/models/dog";
 import { NextResponse } from "next/server";
-import { validationAnimalSchema } from "./validation";
 const PER_PAGE = 15;
 export async function POST(request: Request) {
 	try {
@@ -17,8 +19,15 @@ export async function POST(request: Request) {
 				{ status: 400 }
 			);
 		}
-		const { name, type, isPurebred, age } = validation.data;
-		const animal = new Animal({ name, type, isPurebred, age });
+		const { type, ...data } = validation.data;
+		let animal;
+		if (type === "dog") {
+			animal = new Dog({ ...data });
+		} else if (type === "cat") {
+			animal = new Cat({ ...data });
+		} else {
+			return NextResponse.json({ message: "Invalid animal type" }, { status: 400 });
+		}
 		await animal.save();
 		return NextResponse.json(
 			{
@@ -53,13 +62,19 @@ export async function GET(request: Request) {
 		const sortBy = url.searchParams.get("sortBy") || "createdAt";
 		const order = url.searchParams.get("order") === "asc" ? 1 : -1;
 		const skip = (page - 1) * PER_PAGE;
+		const search = url.searchParams.get("search") || "";
+		let filterQuery: any = {};
+		if (search) {
+			filterQuery = { name: { $regex: search, $options: "i" } };
+		}
 		const [animals, totalAnimals] = await Promise.all([
-			Animal.find()
+			Animal.find(filterQuery)
+				.populate("Toys")
 				.sort({ [sortBy]: order })
 				.skip(skip)
 				.limit(PER_PAGE)
 				.exec(),
-			Animal.countDocuments().exec(),
+			Animal.countDocuments(filterQuery).exec(),
 		]);
 		const totalPages = Math.ceil(totalAnimals / PER_PAGE);
 		const hasNextPage = page < totalPages;

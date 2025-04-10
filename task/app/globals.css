@@ -48,3 +48,22 @@ body {
 	transform: translate(2px, 2px);
 	box-shadow: 2px 1px 0px black;
 }
+
+.color-slide {
+	position: relative;
+}
+.color-slide::before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 101%;
+	z-index: -1;
+	transform: scaleX(0);
+	transition: transform 0.6s;
+	transform-origin: left;
+	content: "";
+}
+.color-slide:hover::before {
+	transform: scaleX(100%);
+}

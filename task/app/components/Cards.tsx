@@ -1,12 +1,13 @@
 "use client";
-import { IAnimal } from "@/models/animal";
+import { ICat } from "@/models/cat";
+import { IDog } from "@/models/dog";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 import Image from "next/image";
 type Props = {
 	children?: React.ReactNode;
-	animals: IAnimal[];
-	onEdit: (animal: IAnimal) => void;
+	animals: IDog[] | ICat[];
+	onEdit: (animal: IDog | ICat) => void;
 };
 
 const DOG_IMAGES = [
@@ -18,14 +19,18 @@ const DOG_IMAGES = [
 	"/imgs/dog7.png",
 ];
 const CAT_IMAGES = ["/imgs/cat1.png", "/imgs/cat2.png", "/imgs/cat3.png", "/imgs/cat4.png"];
-
 export default function Cards({ animals, onEdit }: Props) {
 	return (
 		<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+			{animals.length === 0 && (
+				<p className="col-span-3 flex items-center justify-center h-[200px] text-2xl font-bold text-aqua-900">
+					No animals found
+				</p>
+			)}
 			{animals.map((animal, index) => (
 				<motion.div
 					onClick={() => onEdit(animal)}
-					initial={{ opacity: 0, y: 50 }}
+					initial={{ opacity: 0, y: -20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5, delay: index * 0.1 }}
 					key={animal._id}
@@ -40,7 +45,9 @@ export default function Cards({ animals, onEdit }: Props) {
 					<div className="absolute top-10 right-10 ">
 						<Image
 							src={
-								animal.type === "dog" ? DOG_IMAGES[index % DOG_IMAGES.length] : CAT_IMAGES[index % CAT_IMAGES.length]
+								animal.type.toLowerCase() === "dog"
+									? DOG_IMAGES[index % DOG_IMAGES.length]
+									: CAT_IMAGES[index % CAT_IMAGES.length]
 							}
 							alt={animal.name}
 							width={132}
