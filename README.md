@@ -59,7 +59,7 @@ This README provides instructions for setting up and running the project using e
 
 3. **Create a `.env.local` file or copy paste given .env**
    
-   Create a `.env` file in the root directory with the necessary environment variables:
+   Create a `.env.local` file in the root directory with the necessary environment variables:
    ```
    MONGODB_URI=database-url
    NEXT_PUBLIC_API_URL=localhost
