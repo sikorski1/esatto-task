@@ -27,7 +27,7 @@ This README provides instructions for setting up and running the project using e
 
 4. **Build and run the container**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
    
    This will:
