@@ -7,10 +7,10 @@ export default async function CardsContainer() {
 	const page = 1;
 	const sortBy = "createdAt";
 	const order = "desc";
-
+	const search = "";
 	await queryClient.prefetchQuery({
-		queryKey: ["animals", page, sortBy, order],
-		queryFn: () => fetchAnimals(page, sortBy, order),
+		queryKey: ["animals", page, sortBy, order, search],
+		queryFn: () => fetchAnimals(page, sortBy, order, search),
 	});
 
 	return (

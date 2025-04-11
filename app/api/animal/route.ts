@@ -1,4 +1,4 @@
-import { validationAnimalSchema } from "@/api/animal/validation";
+import { validationAnimalSchema } from "@/app/api/animal/validation";
 import connectMongoDB from "@/libs/mongodb";
 import { Animal } from "@/models/animal";
 import { Cat } from "@/models/cat";

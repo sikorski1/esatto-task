@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 type ModalProps = {
   children: React.ReactNode;
@@ -13,7 +14,9 @@ export default function Modal({ children, onClose }: ModalProps) {
     return () => window.removeEventListener("keydown", onEsc);
   }, [onClose]);
 
-  return (
+  const modalRoot = document.getElementById("modal");
+  if (!modalRoot) return null;
+  return createPortal(
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
@@ -33,6 +36,6 @@ export default function Modal({ children, onClose }: ModalProps) {
           {children}
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>, modalRoot
   );
 }

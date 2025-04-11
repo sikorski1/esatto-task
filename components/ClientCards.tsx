@@ -7,13 +7,13 @@ import { useDeleteAnimal, useGetAnimals, usePostAnimal, useUpdateAnimal } from "
 import { useGetToys } from "@/hooks/useToys";
 import { ICat } from "@/models/cat";
 import { IDog } from "@/models/dog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import SearchInput from "./SearchInput";
 import ToysList from "./ToysList";
 type ModalState =
 	| { isOpen: false; mode: "add" }
 	| { isOpen: true; mode: "add" }
 	| { isOpen: true; mode: "edit"; animal: IDog | ICat };
-const DEBOUNCE_DELAY = 500;
 export default function ClientCards() {
 	const [queryParams, setQueryParams] = useState({
 		page: 1,
@@ -21,7 +21,6 @@ export default function ClientCards() {
 		order: "desc",
 		search: "",
 	});
-	const [searchTerm, setSearchTerm] = useState("");
 	const [modalState, setModalState] = useState<ModalState>({ isOpen: false, mode: "add" });
 	const [viewType, setViewType] = useState<"animals" | "toys">("animals");
 	const openAddModal = () => setModalState({ isOpen: true, mode: "add" });
@@ -88,21 +87,6 @@ export default function ClientCards() {
 	const handleDelete = (id: string) => {
 		deleteAnimal({ id });
 	};
-
-	useEffect(() => {
-		if (searchTerm === queryParams.search) return;
-		const handler = setTimeout(() => {
-			setQueryParams(prev => ({
-				...prev,
-				search: searchTerm,
-				page: 1,
-			}));
-		}, DEBOUNCE_DELAY);
-		return () => {
-			clearTimeout(handler);
-		};
-	}, [searchTerm, queryParams.search]);
-
 	if (animalsError && viewType === "animals") return <div>Error: {animalsError.message}</div>;
 	if (toysError && viewType === "toys") return <div>Error: {toysError.message}</div>;
 	return (
@@ -132,12 +116,15 @@ export default function ClientCards() {
 				{viewType === "animals" && (
 					<>
 						<div className="flex flex-col sm:flex-row justify-between w-full mb-12">
-							<input
-								type="text"
-								placeholder="Search by name..."
-								value={searchTerm}
-								onChange={e => setSearchTerm(e.target.value)}
-								className="px-4 py-2 border rounded-md shadow-strong w-full sm:w-auto mb-4 sm:mb-0"
+							<SearchInput
+								initialValue={queryParams.search}
+								onSearch={value =>
+									setQueryParams(prev => ({
+										...prev,
+										search: value,
+										page: 1,
+									}))
+								}
 							/>
 							<div className="flex mb-4 justify-center items-center flex-wrap gap-2 sm:mb-0 sm:sm:gap-4 sm:flex-nowrap">
 								<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
@@ -153,7 +140,7 @@ export default function ClientCards() {
 									Sort by Date {queryParams.sortBy === "createdAt" && (queryParams.order === "asc" ? "↑" : "↓")}
 								</Button>
 							</div>
-							<Button  onClick={openAddModal}>Add</Button>
+							<Button onClick={openAddModal}>Add</Button>
 						</div>
 						{isLoadingAnimals && <p className=" text-center">Loading...</p>}
 						{animals?.animals && <Cards animals={animals.animals} onEdit={openEditModal} />}
