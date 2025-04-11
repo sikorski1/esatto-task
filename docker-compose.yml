@@ -1,7 +1,5 @@
-version: '3.8'
 services:
   app:
-    image: esatto_task
     build:
       context: ./
       dockerfile: Dockerfile
