@@ -1,7 +1,7 @@
 import connectMongoDB from "@/libs/mongodb";
 import { Toy } from "@/models/toy";
 import { NextResponse } from "next/server";
-export async function GET(request: Request) {
+export async function GET() {
 	try {
 		await connectMongoDB();
 		const toys = await Toy.find();

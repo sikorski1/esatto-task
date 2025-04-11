@@ -15,6 +15,7 @@ body {
 }
 
 .shadow-strong,
+.shadow-strong-select,
 .shadow-strong-clickable,
 .shadow-strong-card,
 .shadow-strong-input,
@@ -44,6 +45,13 @@ body {
 .shadow-strong-input:hover {
 	color: var(--color-background);
 }
+
+.shadow-strong-select:hover {
+	transform: translate(-1px, -1px);
+	box-shadow: 5px 4px 2px black;
+}
+
+.shadow-strong-select:active,
 .shadow-strong-clickable:active {
 	transform: translate(2px, 2px);
 	box-shadow: 2px 1px 0px black;

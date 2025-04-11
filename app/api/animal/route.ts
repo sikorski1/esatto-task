@@ -4,6 +4,10 @@ import { Animal } from "@/models/animal";
 import { Cat } from "@/models/cat";
 import { Dog } from "@/models/dog";
 import { NextResponse } from "next/server";
+interface AnimalFilterQuery {
+	name?: { $regex: string; $options: string };
+}
+
 const PER_PAGE = 15;
 export async function POST(request: Request) {
 	try {
@@ -20,6 +24,7 @@ export async function POST(request: Request) {
 			);
 		}
 		const { type, ...data } = validation.data;
+		console.log(data);
 		let animal;
 		if (type === "dog") {
 			animal = new Dog({ ...data });
@@ -63,7 +68,7 @@ export async function GET(request: Request) {
 		const order = url.searchParams.get("order") === "asc" ? 1 : -1;
 		const skip = (page - 1) * PER_PAGE;
 		const search = url.searchParams.get("search") || "";
-		let filterQuery: any = {};
+		let filterQuery: Partial<AnimalFilterQuery> = {};
 		if (search) {
 			filterQuery = { name: { $regex: search, $options: "i" } };
 		}

@@ -1,5 +1,5 @@
 import { IToy } from "@/models/toy";
-import { colorMap } from "@/utils/colorMap";
+import { colorToyList } from "@/utils/colorMap";
 import { motion } from "framer-motion";
 export default function ToysList({ toys }: { toys: IToy[] }) {
 	return (
@@ -18,8 +18,8 @@ export default function ToysList({ toys }: { toys: IToy[] }) {
 						duration: 0.2,
 						delay: Math.floor(index / 2) * 0.2,
 					}}
-					className={`color-slide ${colorMap[toy.color].background} flex items-center justify-between p-4 ${
-						colorMap[toy.color].text
+					className={`color-slide ${colorToyList[toy.color].background} flex items-center justify-between p-4 ${
+						colorToyList[toy.color].text
 					}  text-aqua-900 font-bold text-xl shadow-strong -skew-x-4`}>
 					<h3>{toy.name}</h3>
 					<p>{toy.color}</p>

@@ -1,21 +1,25 @@
 import Button from "@/components/Button";
 import { ICat } from "@/models/cat";
 import { IDog } from "@/models/dog";
+import { IToy } from "@/models/toy";
+import { colorToySelect } from "@/utils/colorMap";
 import { useForm, useWatch } from "react-hook-form";
-
 type FormProps = {
 	mode: "add" | "edit";
 	animal?: IDog | ICat;
+	toys?: IToy[];
 	onSubmit: (data: IDog | ICat) => void;
 	onClose: () => void;
 	onDelete: (id: string) => void;
 };
-
-export default function Form({ mode, animal, onSubmit, onClose, onDelete }: FormProps) {
+export default function Form({ mode, animal, toys, onSubmit, onClose, onDelete }: FormProps) {
 	const {
 		register,
 		handleSubmit,
 		control,
+		watch,
+		setValue,
+		getValues,
 		formState: { errors },
 	} = useForm<IDog | ICat>({
 		defaultValues: {
@@ -26,11 +30,16 @@ export default function Form({ mode, animal, onSubmit, onClose, onDelete }: Form
 			isPurebred: animal?.isPurebred || false,
 			purssType: animal?.type === "cat" ? animal?.purssType || "Meow" : undefined,
 			barkType: animal?.type === "dog" ? animal?.barkType || "Woof" : undefined,
+			favouriteToys: (animal?.favouriteToys?.map(toy => toy._id) as unknown as IToy[]) || ([] as IToy[]),
 		},
 	});
 
 	const submitForm = (data: IDog | ICat) => {
-		const formattedData = { ...data };
+		const formattedData: IDog | ICat = {
+			...data,
+			favouriteToys: toys?.filter(toy => data.favouriteToys.includes(toy._id as unknown as IToy)) || [],
+		};
+
 		if (formattedData.type === "cat" && (!formattedData.purssType || formattedData.purssType.trim() === "")) {
 			formattedData.purssType = "Meow";
 		}
@@ -108,6 +117,42 @@ export default function Form({ mode, animal, onSubmit, onClose, onDelete }: Form
 				</label>
 				<input id="isPurebred" type="checkbox" {...register("isPurebred")} className="p-2" />
 			</div>
+			{toys && (
+				<div>
+					<label className="block text-lg mb-2">Favourite Toys</label>
+					<div className="h-64 overflow-y-auto border p-2">
+						<div className="grid grid-cols-3 gap-3">
+							{toys.map(toy => (
+								<div
+									key={toy._id}
+									className={`flex justify-center items-center p-3 shadow-strong-select cursor-pointer transition-colors uppercase ${
+										Array.isArray(watch("favouriteToys")) && watch("favouriteToys").includes(toy._id as unknown as IToy)
+											? `${colorToySelect[toy.color].background} ${colorToySelect[toy.color].text}`
+											: colorToySelect[toy.color].hoverBackground
+									}`}
+									onClick={() => {
+										const currentToys = Array.isArray(getValues("favouriteToys"))
+											? [...getValues("favouriteToys")]
+											: [];
+
+										if (currentToys.includes(toy._id as unknown as IToy)) {
+											setValue(
+												"favouriteToys",
+												currentToys.filter(id => id !== (toy._id as unknown as IToy)),
+												{ shouldValidate: true }
+											);
+										} else {
+											setValue("favouriteToys", [...currentToys, toy._id as unknown as IToy], { shouldValidate: true });
+										}
+									}}>
+									<p className="text-center">{toy.name}</p>
+								</div>
+							))}
+						</div>
+					</div>
+					<input type="hidden" {...register("favouriteToys")} />
+				</div>
+			)}
 			<div className="mt-6 flex justify-end gap-4">
 				{mode == "edit" && animal && (
 					<button

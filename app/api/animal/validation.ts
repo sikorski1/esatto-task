@@ -4,8 +4,16 @@ const baseAnimalSchema = {
 	name: z.string().min(1, { message: "Name is required" }),
 	isPurebred: z.boolean().optional(),
 	age: z.coerce.number().min(1, { message: "Age must be a positive number" }),
+	favouriteToys: z
+		.array(
+			z.object({
+				_id: z.string(),
+				name: z.string(),
+				color: z.string(),
+			})
+		)
+		.optional(),
 };
-
 export const validationAnimalSchema = z.discriminatedUnion("type", [
 	z.object({
 		...baseAnimalSchema,
@@ -24,4 +32,13 @@ export const updateValidationAnimalSchema = z.object({
 	age: z.coerce.number().min(0).optional(),
 	barkType: z.string().optional(),
 	purssType: z.string().optional(),
+	favouriteToys: z
+		.array(
+			z.object({
+				_id: z.string(),
+				name: z.string(),
+				color: z.string(),
+			})
+		)
+		.optional(),
 });

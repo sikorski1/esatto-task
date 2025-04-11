@@ -7,7 +7,7 @@ import { useDeleteAnimal, useGetAnimals, usePostAnimal, useUpdateAnimal } from "
 import { useGetToys } from "@/hooks/useToys";
 import { ICat } from "@/models/cat";
 import { IDog } from "@/models/dog";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import SearchInput from "./SearchInput";
 import ToysList from "./ToysList";
 type ModalState =
@@ -75,7 +75,13 @@ export default function ClientCards() {
 			}));
 		}
 	};
-
+	const handleSearch = useCallback((value: string) => {
+		setQueryParams(prev => ({
+			...prev,
+			search: value,
+			page: 1,
+		}));
+	}, []);
 	const handleFormSubmit = (data: IDog | ICat) => {
 		if (modalState.mode === "add") {
 			createAnimal({ data });
@@ -97,6 +103,7 @@ export default function ClientCards() {
 						<Form
 							mode={modalState.mode}
 							animal={modalState.mode === "edit" ? modalState.animal : undefined}
+							toys={toys?.toys}
 							onSubmit={handleFormSubmit}
 							onClose={closeModal}
 							onDelete={handleDelete}
@@ -116,16 +123,7 @@ export default function ClientCards() {
 				{viewType === "animals" && (
 					<>
 						<div className="flex flex-col sm:flex-row justify-between w-full mb-12">
-							<SearchInput
-								initialValue={queryParams.search}
-								onSearch={value =>
-									setQueryParams(prev => ({
-										...prev,
-										search: value,
-										page: 1,
-									}))
-								}
-							/>
+							<SearchInput initialValue={queryParams.search} onSearch={handleSearch} />
 							<div className="flex mb-4 justify-center items-center flex-wrap gap-2 sm:mb-0 sm:sm:gap-4 sm:flex-nowrap">
 								<Button onClick={() => changeSortField("type")} isActive={queryParams.sortBy === "type"}>
 									Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": 🐱" : ": 🐶")}
