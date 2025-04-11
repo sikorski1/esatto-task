@@ -7,6 +7,7 @@ import { useDeleteAnimal, useGetAnimals, usePostAnimal, useUpdateAnimal } from "
 import { useGetToys } from "@/hooks/useToys";
 import { ICat } from "@/models/cat";
 import { IDog } from "@/models/dog";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { useCallback, useState } from "react";
 import SearchInput from "./SearchInput";
 import ToysList from "./ToysList";
@@ -129,13 +130,16 @@ export default function ClientCards() {
 									Sort by Type{queryParams.sortBy === "type" && (queryParams.order === "asc" ? ": 🐱" : ": 🐶")}
 								</Button>
 								<Button onClick={() => changeSortField("name")} isActive={queryParams.sortBy === "name"}>
-									Sort by Name {queryParams.sortBy === "name" && (queryParams.order === "asc" ? "↑" : "↓")}
+									Sort by Name{" "}
+									{queryParams.sortBy === "name" && (queryParams.order === "asc" ? <ArrowUp /> : <ArrowDown />)}
 								</Button>
 								<Button onClick={() => changeSortField("age")} isActive={queryParams.sortBy === "age"}>
-									Sort by Age {queryParams.sortBy === "age" && (queryParams.order === "asc" ? "↑" : "↓")}
+									Sort by Age{" "}
+									{queryParams.sortBy === "age" && (queryParams.order === "asc" ? <ArrowUp /> : <ArrowDown />)}
 								</Button>
 								<Button onClick={() => changeSortField("createdAt")} isActive={queryParams.sortBy === "createdAt"}>
-									Sort by Date {queryParams.sortBy === "createdAt" && (queryParams.order === "asc" ? "↑" : "↓")}
+									Sort by Date{" "}
+									{queryParams.sortBy === "createdAt" && (queryParams.order === "asc" ? <ArrowUp /> : <ArrowDown />)}
 								</Button>
 							</div>
 							<Button onClick={openAddModal}>Add</Button>

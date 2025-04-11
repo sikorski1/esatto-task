@@ -24,7 +24,6 @@ export async function POST(request: Request) {
 			);
 		}
 		const { type, ...data } = validation.data;
-		console.log(data);
 		let animal;
 		if (type === "dog") {
 			animal = new Dog({ ...data });
@@ -74,7 +73,7 @@ export async function GET(request: Request) {
 		}
 		const [animals, totalAnimals] = await Promise.all([
 			Animal.find(filterQuery)
-				.populate("Toys")
+				.populate("favouriteToys")
 				.sort({ [sortBy]: order })
 				.skip(skip)
 				.limit(PER_PAGE)

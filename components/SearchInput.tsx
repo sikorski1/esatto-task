@@ -23,7 +23,7 @@ export default function SearchInput({ onSearch, initialValue = "" }: Props) {
 			placeholder="Search by name..."
 			value={inputValue}
 			onChange={e => setInputValue(e.target.value)}
-			className="px-4 py-2 border rounded-md shadow-strong w-full sm:w-auto mb-4 sm:mb-0"
+			className="px-4 py-2 text-lg border rounded-md shadow-strong w-full sm:w-auto mb-4 sm:mb-0"
 		/>
 	);
 }

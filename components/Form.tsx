@@ -120,7 +120,7 @@ export default function Form({ mode, animal, toys, onSubmit, onClose, onDelete }
 			{toys && (
 				<div>
 					<label className="block text-lg mb-2">Favourite Toys</label>
-					<div className="h-64 overflow-y-auto border p-2">
+					<div className="h-64 overflow-y-auto p-2">
 						<div className="grid grid-cols-3 gap-3">
 							{toys.map(toy => (
 								<div

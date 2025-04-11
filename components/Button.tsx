@@ -10,7 +10,7 @@ export default function Button({ children, onClick, disabled, isActive, type, co
 	return (
 		<button
 			onClick={onClick}
-			className={`p-2 text-aqua-900 font-bold text-xl shadow-strong-clickable cursor-pointer ${
+			className={`p-2 flex items-center justify-center text-aqua-900 font-bold text-xl shadow-strong-clickable cursor-pointer ${
 				isActive ? "text-background bg-aqua-900" : ""
 			} ${disabled ? "cursor-not-allowed opacity-50" : ""} ${colors}`}
 			type={type || "button"}

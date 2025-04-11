@@ -32,7 +32,7 @@ export default function Cards({ animals, onEdit }: Props) {
 					onClick={() => onEdit(animal)}
 					initial={{ opacity: 0, y: -20 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5, delay: index * 0.1 }}
+					transition={{ duration: 0.4, delay: index * 0.1 }}
 					key={animal._id}
 					className="relative p-4 h-[300px] bg-aqua-500 font-bold text-white text-lg shadow-strong-card cursor-pointer">
 					<h2 className="absolute -top-6 inline-block p-2 text-xl text-aqua-900  bg-background shadow-strong">
@@ -41,6 +41,12 @@ export default function Cards({ animals, onEdit }: Props) {
 					<div className="mt-8">
 						<p>Type: {animal.type}</p>
 						<p>Purebred: {animal.isPurebred ? "Yes" : "No"}</p>
+						{animal.favouriteToys.length > 0 && (
+							<p className="max-w-[200px]">
+								Favourite Toys:{" "}
+								<span className="text-base">{animal.favouriteToys.map(toy => toy.name).join(", ")}</span>
+							</p>
+						)}
 					</div>
 					<div className="absolute top-10 right-10 ">
 						<Image

@@ -12,17 +12,16 @@ export default function ToysList({ toys }: { toys: IToy[] }) {
 			{toys.map((toy, index) => (
 				<motion.div
 					key={toy._id}
-					initial={{ opacity: 0, y: -10 }}
-					animate={{ opacity: 1, y: 0 }}
+					initial={{ opacity: 0, y: -20}}
+					animate={{ opacity: 1, y: 0}}
 					transition={{
 						duration: 0.2,
 						delay: Math.floor(index / 2) * 0.2,
 					}}
-					className={`color-slide ${colorToyList[toy.color].background} flex items-center justify-between p-4 ${
+					className={`color-slide ${colorToyList[toy.color].background} select-none flex items-center justify-between p-4  ${
 						colorToyList[toy.color].text
-					}  text-aqua-900 font-bold text-xl shadow-strong -skew-x-4`}>
-					<h3>{toy.name}</h3>
-					<p>{toy.color}</p>
+					}  text-aqua-900 font-bold text-xl shadow-strong  overflow-hidden`}>
+					<h3 className="uppercase">{toy.name}</h3>
 				</motion.div>
 			))}
 		</div>
