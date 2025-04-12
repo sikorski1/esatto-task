@@ -165,7 +165,7 @@ The application uses MongoDB with Mongoose for data modeling. Here are the main 
 - **Backend**: Next.js API routes
 - **Database**: MongoDB with Mongoose ORM
 - **Language**: TypeScript
-- **Styling**: CSS/SCSS (or specify your styling approach)
+- **Styling**: Tailwind, CSS
 - **State Management**: React Query
 - **Animations**: Framer Motion
 - **Deployment**: Docker containerization
